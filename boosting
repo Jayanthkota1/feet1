@@ -1,0 +1,45 @@
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+X, y = make_classification(n_samples=1000, n_features=20, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+ada_clf = AdaBoostClassifier(n_estimators=50, random_state=42)
+ada_clf.fit(X_train, y_train)
+y_pred = ada_clf.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print("Accuracy using scikit-learn:", accuracy)
+
+
+Output 
+Accuracy using scikit-learn: 0.87
+Using TensorFlow
+
+
+
+
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+# Generate a toy dataset
+X, y = make_classification(n_samples=1000, n_features=20, random_state=42)
+# Split the data into train and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Define the TensorFlow model
+model = Sequential([
+    Dense(64, activation='relu', input_shape=(20,)),
+    Dense(32, activation='relu'),
+    Dense(1, activation='sigmoid')
+])
+# Compile the model
+model.compile(optimizer='adam',
+              loss='binary_crossentropy',
+              metrics=['accuracy'])
+# Train the model
+model.fit(X_train, y_train, epochs=10, batch_size=32, verbose=0)
+# Evaluate the model
+_, accuracy = model.evaluate(X_test, y_test)
+print("Accuracy using TensorFlow:", accuracy)
