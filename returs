@@ -1,0 +1,50 @@
+import tensorflow as tf
+from tensorflow.keras import layers
+#Load the Reuters dataset
+reuters = tf.keras.datasets.reuters
+(train_data,train_labels),(test_data,test_labels)=reuters.load_data(num_words=10000)
+
+#Vectorize the data
+word_index = reuters.get_word_index()
+train_data=tf.keras.preprocessing.sequence.pad_sequences(train_data, maxlen=100)
+test_data=tf.keras.preprocessing.sequence.pad_sequences(test_data, maxlen=100)
+
+#Build the neural network model
+model = tf.keras.Sequential([
+    layers.Embedding(10000, 46),
+    layers.LSTM(64,return_sequences=True),
+    layers.GlobalMaxPooling1D(),
+    layers.Dense(64, activation = 'relu'),
+    layers.Dense(46, activation = 'softmax')
+    ])
+
+#Compile and Train the model
+model.compile(optimizer='adam',loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.fit(train_data, train_labels, epochs=10, validation_data=(test_data, test_labels))
+
+test_loss,test_acc=model.evaluate(test_data,test_labels)
+
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+history = model.fit(train_data, train_labels, epochs=10, validation_data=(test_data, test_labels))
+# Plot training & validation loss values
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('Model loss')
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Validation'], loc='upper right')
+plt.show()
+
+# Plot training & validation accuracy values
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title('Model accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Validation'], loc='lower right')
+plt.show()
+
+#Evaluate the model
+print("Test Accuracy: ", test_acc)
