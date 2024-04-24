@@ -1,0 +1,17 @@
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+H = tf.keras.datasets.boston_housing
+(train_x,train_y),(test_x,test_y)=H.load_data()
+train_x.shape
+
+#build neural network
+model=tf.keras.Sequential([
+    tf.keras.layers.Dense(13,activation='relu'),
+    tf.keras.layers.Dense(6,activation='relu'),
+    tf.keras.layers.Dense(1,activation='sigmoid')
+])
+model.compile(optimizer='adam',loss='mse',metrics='mae')
+model.fit(train_x,train_y,epochs=13)
+#evaluate
+model.evaluate(test_x,test_y)
